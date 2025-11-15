@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @ApplicationScoped
@@ -24,13 +25,15 @@ public class TransactionService {
         return repository.listAll();
     }
 
-    public double getBalance() {
-        var income = repository.list("type", "INCOME")
-                .stream().mapToDouble(transaction -> transaction.amount).sum();
+    public BigDecimal getBalance() {
+        BigDecimal income = repository.list("type", "INCOME")
+                .stream().map(transaction -> transaction.amount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        var outcome = repository.list("type", "OUTCOME")
-                .stream().mapToDouble(transaction -> transaction.amount).sum();
+        BigDecimal outcome = repository.list("type", "OUTCOME")
+                .stream().map(transaction -> transaction.amount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return income - outcome;
+        return income.subtract(outcome);
     }
 }

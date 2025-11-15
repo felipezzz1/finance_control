@@ -2,6 +2,7 @@ package com.fezor.finance_control.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -15,8 +16,8 @@ public class Transaction {
     @Column(nullable = false)
     public String description;
 
-    @Column(nullable = false)
-    public Double amount;
+    @Column(precision = 18, scale = 2, nullable = false)
+    public BigDecimal amount;
 
     @Column(nullable = false)
     public String type;
