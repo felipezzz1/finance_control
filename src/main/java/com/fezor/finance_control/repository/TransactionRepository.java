@@ -6,5 +6,4 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class TransactionRepository implements PanacheRepository<Transaction> {
-
 }
