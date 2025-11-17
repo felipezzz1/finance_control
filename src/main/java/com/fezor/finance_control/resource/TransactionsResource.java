@@ -1,6 +1,7 @@
 package com.fezor.finance_control.resource;
 
 import com.fezor.finance_control.entity.Transaction;
+import com.fezor.finance_control.entity.User;
 import com.fezor.finance_control.service.TransactionService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -23,7 +24,20 @@ public class TransactionsResource {
 
     @POST
     public Transaction create(Transaction transaction){
-        return service.create(transaction);
+        User user = User.findById(transaction.user);
+
+        if(user == null){
+            throw new WebApplicationException("User not found", 404);
+        }
+
+        Transaction t = new Transaction();
+
+        t.description = transaction.description;
+        t.amount = transaction.amount;
+        t.date = transaction.date;
+        t.user = transaction.user;
+
+        return service.create(t);
     }
 
     @GET
