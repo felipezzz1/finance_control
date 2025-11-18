@@ -1,39 +1,63 @@
 package com.fezor.finance_control.service;
 
+import com.fezor.finance_control.dto.TransactionCreateDTO;
+import com.fezor.finance_control.dto.TransactionResponseDTO;
 import com.fezor.finance_control.entity.Transaction;
-import com.fezor.finance_control.repository.TransactionRepository;
+import com.fezor.finance_control.entity.User;
+import com.fezor.finance_control.mapper.TransactionMapper;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @ApplicationScoped
 public class TransactionService {
 
-    @Inject
-    TransactionRepository repository;
+    @Transactional
+    public TransactionResponseDTO create(TransactionCreateDTO dto){
+
+        User user = User.findById(dto.userId);
+        if(user == null) {
+            throw new NotFoundException("User not found");
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.description = dto.description;
+        transaction.amount = dto.amount;
+        transaction.type = dto.type;
+        transaction.date = dto.date;
+        transaction.user = user;
+        transaction.persist();
+
+        return TransactionMapper.toDTO(transaction);
+    }
+
+    public List<TransactionResponseDTO> listAll() {
+        return Transaction.listAll()
+                .stream()
+                .map(transaction -> TransactionMapper.toDTO((Transaction) transaction))
+                .toList();
+    }
 
     @Transactional
-    public Transaction create(Transaction transaction){
-        repository.persist(transaction);
-        return transaction;
-    }
+    public TransactionResponseDTO update(Long id, TransactionCreateDTO dto) {
+        Transaction transaction = Transaction.findById(id);
+        if (transaction == null){
+            return null;
+        }
 
-    public List<Transaction> listAll() {
-        return repository.listAll();
-    }
+        User user = User.findById(dto.userId);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
 
-    public BigDecimal getBalance() {
-        BigDecimal income = repository.list("type", "INCOME")
-                .stream().map(transaction -> transaction.amount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        transaction.description = dto.description;
+        transaction.amount = dto.amount;
+        transaction.type = dto.type;
+        transaction.date = dto.date;
+        transaction.user = user;
 
-        BigDecimal outcome = repository.list("type", "OUTCOME")
-                .stream().map(transaction -> transaction.amount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return income.subtract(outcome);
+        return TransactionMapper.toDTO(transaction);
     }
 }
