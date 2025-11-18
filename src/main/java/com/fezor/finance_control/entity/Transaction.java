@@ -1,5 +1,7 @@
 package com.fezor.finance_control.entity;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -7,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "transactions")
-public class Transaction {
+public class Transaction extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +26,8 @@ public class Transaction {
 
     @Column(nullable = false)
     public LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    public User user;
 }
