@@ -41,6 +41,11 @@ public class TransactionService {
     }
 
     @Transactional
+    public boolean delete(Long id) {
+        return Transaction.deleteById(id);
+    }
+
+    @Transactional
     public TransactionResponseDTO update(Long id, TransactionCreateDTO dto) {
         Transaction transaction = Transaction.findById(id);
         if (transaction == null){
