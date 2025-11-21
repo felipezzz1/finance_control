@@ -10,6 +10,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/auth")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -21,8 +22,10 @@ public class AuthResource {
 
     @POST
     @Path("/register")
-    public void register(RegisterDTO registerDTO){
+    public Response register(RegisterDTO registerDTO){
+
         authService.register(registerDTO);
+        return Response.status(Response.Status.CREATED).build();
     }
 
     @POST

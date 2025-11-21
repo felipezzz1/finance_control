@@ -2,6 +2,7 @@ package com.fezor.finance_control.resource;
 
 import com.fezor.finance_control.dto.TransactionCreateDTO;
 import com.fezor.finance_control.service.TransactionService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -17,6 +18,7 @@ public class TransactionResource {
     TransactionService service;
 
     @GET
+    @RolesAllowed("USER")
     public Response list() {
         return Response.ok(service.listAll()).build();
     }

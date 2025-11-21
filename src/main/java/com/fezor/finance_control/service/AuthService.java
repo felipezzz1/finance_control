@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.time.Instant;
 import java.util.Set;
 
 @ApplicationScoped
@@ -21,6 +22,10 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterDTO dto){
+        if (userRepository.findByEmail(dto.email) != null) {
+            throw new RuntimeException("Email already exists");
+        }
+
         User user = new User();
         user.username = dto.username;
         user.email = dto.email;
@@ -38,8 +43,11 @@ public class AuthService {
         }
 
         String token = Jwt.issuer("finance-control")
-                .subject(user.email)
+                .subject(user.id.toString())
+                .upn(user.email)
                 .groups(Set.of("USER"))
+                .issuedAt(Instant.now())
+                .expiresAt(Instant.now().plusSeconds(3600))
                 .sign();
 
         return new LoginResponseDTO(token, user.username);
