@@ -38,7 +38,7 @@ public class AuthServiceTest {
         RegisterDTO dto = new RegisterDTO();
         dto.username = "Example";
         dto.email = "example@email.com";
-        dto.password = "pwexample";
+        dto.password = "PwEx4mpl3-";
 
         when(userRepository.findByEmail(dto.email)).thenReturn(null);
 

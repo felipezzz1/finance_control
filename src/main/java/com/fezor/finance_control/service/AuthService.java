@@ -5,6 +5,7 @@ import com.fezor.finance_control.dto.LoginResponseDTO;
 import com.fezor.finance_control.dto.RegisterDTO;
 import com.fezor.finance_control.entity.User;
 import com.fezor.finance_control.repository.UserRepository;
+import com.fezor.finance_control.util.PasswordValidator;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,6 +25,11 @@ public class AuthService {
     public void register(RegisterDTO dto){
         if (userRepository.findByEmail(dto.email) != null) {
             throw new RuntimeException("Email already exists");
+        }
+
+        if (!PasswordValidator.isValid(dto.password)) {
+            throw new RuntimeException("Invalid password, the password must have between 6 and 32 characters" +
+                    ", at least 1 number, 1 special character and 1 upper letter.");
         }
 
         User user = new User();
