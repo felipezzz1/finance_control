@@ -2,10 +2,10 @@ package com.fezor.finance_control.dto;
 
 public class LoginResponseDTO {
     public String token;
-    public String name;
+    public String username;
 
-    public LoginResponseDTO(String token, String name) {
+    public LoginResponseDTO(String token, String username) {
         this.token = token;
-        this.name = name;
+        this.username = username;
     }
 }
